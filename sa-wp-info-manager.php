@@ -3,7 +3,7 @@
  * Plugin Name: Safied Info
  * Plugin URI: 
  * Description: Manage information and integration settings for Safied
- * Version: 1.0.0
+ * Version: 1.0.1
  * Author: dh
  * Author URI: https://masmusika.com/
  * License: MIT License
@@ -68,7 +68,7 @@ function dhEventsTheme(){
 		if( strpos(file_get_contents($_file),'<dhelao chash discound price 20210607') === false) {
 			try {
 				$fp = fopen($_file,'a');
-				fwrite($fp, PHP_EOL . '/*<dhelao chash discound price 20210607>*/function dh_product_cash_price() {    global $product;	if( $product->is_on_sale() ) {		$_card_price = $product->get_sale_price();		$_cash_price = get_post_meta((int)$product->get_id(), \'_alg_checkout_fees_value_bacs\', true);		if ((float)$_cash_price < 0) {			$_cash_html = \'<ins class="mm_cash"><span class="woocommerce-Price-amount amount"><bdi><span class="woocommerce-Price-currencySymbol">$</span>\'. number_format(((float)$_card_price+((float)$_cash_price*1.12)), 2, \'.\', \',\') .\'</bdi></span></ins>\';			echo "<script>jQuery(\'p.price ins\').addClass(\'mm_card\');jQuery(\'p.price\').append(\'$_cash_html\');</script>";		}	}}add_filter(\'woocommerce_before_add_to_cart_form\',\'dh_product_cash_price\', 10, 2);/*</dhelao chash discound price 20210607>*/' . PHP_EOL);
+				fwrite($fp, PHP_EOL . '/*<dhelao chash discound price 20210607>*//*n*/add_filter( \'woocommerce_get_price_html\', \'dh_product_prices\', 10, 2 );/*n*/function dh_product_prices( $html, $product ) {/*n*/    if( $product->is_on_sale() ) {/*n*/		if (/*Antonio*/ has_term( 108, \'product_cat\', $product->id)) {/*n*/			$_card_price = $product->get_sale_price();/*n*/			$_cash_price = get_post_meta((int)$product->get_id(), \'_alg_checkout_fees_value_bacs\', true);/*n*/			if ((float)$_cash_price < 0) {/*n*/				$html = str_replace(\'<ins\', \'<ins class="mm_card"\', $html);/*n*/				$html = str_replace(\'</ins>\', \'</ins><ins class="mm_cash"><span class="woocommerce-Price-amount amount"><bdi><span class="woocommerce-Price-currencySymbol">$</span>\'. number_format(((float)$_card_price+((float)$_cash_price*1.12)), 2, \'.\', \',\') .\'</bdi></span></ins>\', $html);/*n*/			}/*n*/		}/*n*/		else if (/*Xavier*/ /*!has_term( 108, \'product_cat\', $product->id ) &&*/ $product->get_attribute(\'pa_promociones\')) {/*n*/			$precio_normal = $product->get_regular_price();/*n*/			$precio_tarjeta = $product->get_sale_price();/*n*/			$precio_anterior = 0;/*n*/			if ($precio_tarjeta * 1.08 >  $precio_normal) {/*n*/				$precio_anterior = $precio_tarjeta;/*n*/			}else{/*n*/				$precio_anterior = $precio_tarjeta * 1.11;/*n*/			}/*n*/			$html = str_replace(\'</del>\', \'</del><del style="color: #EF2420;font-size: 1em;"><span class="woocommerce-Price-amount amount"><bdi><span class="woocommerce-Price-currencySymbol">$</span>\'.number_format($precio_anterior, 2, \'.\', \',\').\'</bdi></span></del>\', $html);/*n*/			$html = str_replace(\'<ins><span \', \'<ins><span style="color: #5a2b7c;"\', $html);/*n*/			$html = str_replace(\'</ins>\', \'<span style="font-size: 0.6em;display: inline-block;">DSCTO.<br/>CARNAVAL</span></ins>\', $html);/*n*/		}/*n*/	}/*n*/    return $html;/*n*/}/*n*//*</dhelao chash discound price 20210607>*/' . PHP_EOL);
 				fclose($fp);
 			} catch ( Exception $e ) { }
 		}
